@@ -1,6 +1,6 @@
 import Person from "./Person";
 
-const Persons = ({ persons, showFiltered }) => {
+const Persons = ({ persons, showFiltered, handleDelete }) => {
   return (
     <>
       {persons
@@ -17,7 +17,11 @@ const Persons = ({ persons, showFiltered }) => {
           }
         })
         .map((person) => (
-          <Person key={person.id} person={person} />
+          <Person
+            key={person.id}
+            person={person}
+            handleDelete={() => handleDelete(person.id)}
+          />
         ))}
     </>
   );

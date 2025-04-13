@@ -3,6 +3,7 @@ import axios from "axios";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,13 +12,12 @@ const App = () => {
   const [showFiltered, setShowFiltered] = useState("");
 
   useEffect(() => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons/").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+    // console.log("effect");
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
-  console.log("render", persons.length, "persons");
+  // console.log("render", persons.length, "persons");
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -25,15 +25,19 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
+      // id: persons.length + 1,
     };
 
     if (persons.find((person) => person.name === personObject.name)) {
       alert(`${newName} is already added to phonebook`);
-    } else {
-      setPersons(persons.concat(personObject));
       setNewName("");
       setNewNumber("");
+    } else {
+      personService.create(personObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+      });
     }
   };
 
@@ -43,13 +47,22 @@ const App = () => {
   };
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     setNewNumber(event.target.value);
   };
 
   const handleFilteredChange = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     setShowFiltered(event.target.value);
+  };
+
+  const handleDeleteOf = (id) => {
+    if (window.confirm("Do you really want to delete?")) {
+      personService.deletePerson(id).then((response) => {
+        alert(`Person with ID ${id} were deleted from database`);
+        setPersons(persons.filter((n) => n.id !== id));
+      });
+    }
   };
 
   return (
@@ -65,7 +78,11 @@ const App = () => {
         numberOnChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={persons} showFiltered={showFiltered} />
+      <Persons
+        persons={persons}
+        showFiltered={showFiltered}
+        handleDelete={handleDeleteOf}
+      />
       {/* <div>
         debug: {newName} {newNumber}
       </div> */}
