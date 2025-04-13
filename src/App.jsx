@@ -29,9 +29,29 @@ const App = () => {
     };
 
     if (persons.find((person) => person.name === personObject.name)) {
-      alert(`${newName} is already added to phonebook`);
-      setNewName("");
-      setNewNumber("");
+      if (
+        confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one`
+        )
+      ) {
+        const personFound = persons.find(
+          (person) => person.name === personObject.name
+        );
+        personService
+          .update(personFound.id, personObject)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== personFound.id ? person : returnedPerson
+              )
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+      } else {
+        setNewName("");
+        setNewNumber("");
+      }
     } else {
       personService.create(personObject).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
