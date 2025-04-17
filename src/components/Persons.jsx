@@ -20,7 +20,7 @@ const Persons = ({ persons, showFiltered, handleDelete }) => {
           <Person
             key={person.id}
             person={person}
-            handleDelete={() => handleDelete(person.id)}
+            handleDelete={() => handleDelete(person.id, person)}
           />
         ))}
     </>
