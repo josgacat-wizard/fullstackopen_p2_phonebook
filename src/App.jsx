@@ -57,11 +57,11 @@ const App = () => {
             setErrorMessage(
               `'${personObject.name}' was already removed from server`
             );
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+            setPersons(persons.filter((n) => n.id !== personFound.id));
           });
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 5000);
-        setPersons(persons.filter((n) => n.id !== personFound.id));
         setNewName("");
         setNewNumber("");
       } else {
